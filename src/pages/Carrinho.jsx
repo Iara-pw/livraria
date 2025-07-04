@@ -1,15 +1,23 @@
-import styled from "styled-components";
-
-const Wrapper = styled.main`
-  padding: 2rem;
-`;
+import { useCarrinho } from "../context/CarrinhoContext";
 
 const Carrinho = () => {
+  const { carrinho } = useCarrinho();
+  console.log("Carrinho atual:", carrinho);
+
   return (
-    <Wrapper>
+    <div>
       <h2>Seu Carrinho</h2>
-      <p>Você ainda não adicionou nenhum livro.</p>
-    </Wrapper>
+      {carrinho.length === 0 ? (
+        <p>O carrinho está vazio 🛒</p>
+      ) : (
+        carrinho.map((livro, index) => (
+          <div key={index}>
+            <p>{livro.titulo}</p>
+            <p>R$ {livro.preco.toFixed(2)}</p>
+          </div>
+        ))
+      )}
+    </div>
   );
 };
 
