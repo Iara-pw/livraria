@@ -1,27 +1,3 @@
-import { createContext, useContext, useState } from "react";
-
+import { createContext } from "react";
 const CarrinhoContext = createContext();
-
-export const useCarrinho = () => useContext(CarrinhoContext);
-
-export const CarrinhoProvider = ({ children }) => {
-  const [carrinho, setCarrinho] = useState([]);
-
-  const adicionarAoCarrinho = (livro) => {
-    setCarrinho((prev) => [...prev, livro]);
-  };
-
-  const removerDoCarrinho = (index) => {
-    setCarrinho((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  return (
-    <CarrinhoContext.Provider
-      value={{ carrinho, adicionarAoCarrinho, removerDoCarrinho }}
-    >
-      {children}
-    </CarrinhoContext.Provider>
-  );
-};
-
 export default CarrinhoContext;

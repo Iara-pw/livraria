@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import { useCarrinho } from "../context/CarrinhoContext";
+import useCarrinho from "../context/useCarrinho";
 import { useState } from "react";
 
 // Importe as imagens dos livros (somente os que têm capa local)

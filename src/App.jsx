@@ -6,6 +6,8 @@ import Produto from "./pages/Produto";
 import Carrinho from "./pages/Carrinho";
 import Login from "./pages/Login";
 import Contato from "./pages/Contato";
+import Cadastro from "./pages/Cadastro"; // ou caminho relativo correto
+
 import Header from "./components/Header";
 
 function App() {
@@ -19,6 +21,7 @@ function App() {
         <Route path="/produto/:id" element={<Produto />} />
         <Route path="/carrinho" element={<Carrinho />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/contato" element={<Contato />} />
       </Routes>
     </>

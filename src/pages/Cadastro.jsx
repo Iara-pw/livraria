@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
 import styled from "styled-components";
-import useAuth from "../context/useAuth";
+import { useNavigate, Link } from "react-router-dom";
 
 const Wrapper = styled.main`
   min-height: 100vh;
@@ -58,39 +57,52 @@ const Mensagem = styled.p`
   text-align: center;
 `;
 
-const Login = () => {
+const Cadastro = () => {
+  const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-
-  const { login } = useAuth();
+  const [confirmar, setConfirmar] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleCadastro = (e) => {
     e.preventDefault();
 
-    const usuarioSalvo = JSON.parse(localStorage.getItem("usuario"));
-
-    if (
-      usuarioSalvo &&
-      usuarioSalvo.email === email &&
-      usuarioSalvo.senha === senha
-    ) {
-      login(); // ativa login no contexto
-      alert(`Bem-vinda de volta, ${usuarioSalvo.nome} 💙`);
-      navigate("/"); // redireciona para a página principal
-    } else {
-      alert("E-mail ou senha inválidos. Tente novamente 😥");
+    if (!nome || !email || !senha || !confirmar) {
+      alert("Por favor, preencha todos os campos 💙");
+      return;
     }
+
+    if (senha !== confirmar) {
+      alert("As senhas não coincidem 😥");
+      return;
+    }
+
+    const usuario = {
+      nome,
+      email,
+      senha,
+    };
+
+    localStorage.setItem("usuario", JSON.stringify(usuario));
+    alert("Cadastro realizado com sucesso! Agora é só fazer login ✨");
+    navigate("/login");
   };
 
   return (
     <Wrapper>
-      <Formulario onSubmit={handleLogin}>
-        <Titulo>Login</Titulo>
+      <Formulario onSubmit={handleCadastro}>
+        <Titulo>Cadastro 💙</Titulo>
+
+        <Campo
+          type="text"
+          placeholder="Seu nome"
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
+        />
 
         <Campo
           type="email"
-          placeholder="E-mail"
+          placeholder="Seu e-mail"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -102,12 +114,19 @@ const Login = () => {
           onChange={(e) => setSenha(e.target.value)}
         />
 
-        <Botao type="submit">Entrar</Botao>
+        <Campo
+          type="password"
+          placeholder="Confirmar senha"
+          value={confirmar}
+          onChange={(e) => setConfirmar(e.target.value)}
+        />
+
+        <Botao type="submit">Cadastrar</Botao>
 
         <Mensagem>
-          Ainda não tem conta?{" "}
-          <Link to="/cadastro" style={{ color: "#3c82f6", fontWeight: "bold" }}>
-            Crie seu cadastro 💙
+          Já tem uma conta?{" "}
+          <Link to="/login" style={{ color: "#3c82f6", fontWeight: "bold" }}>
+            Faça login
           </Link>
         </Mensagem>
       </Formulario>
@@ -115,4 +134,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Cadastro;
