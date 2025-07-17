@@ -71,53 +71,72 @@ const livrosFake = [
     titulo: "O Pequeno Príncipe",
     autor: "Antoine de Saint-Exupéry",
     preco: 19.9,
-    descricao: "Uma fábula poética sobre amizade, solidão e amor.",
+
+    imagem: "/imagens/OPequenoPrincipe.jpg",
   },
   {
     id: "2",
     titulo: "A Revolução dos Bichos",
     autor: "George Orwell",
     preco: 24.9,
-    descricao: "Uma crítica satírica ao totalitarismo contada por animais.",
+
+    imagem: "/imagens/ARevolucaoBichos.jpg",
   },
   {
     id: "3",
     titulo: "Orgulho e Preconceito",
     autor: "Jane Austen",
     preco: 34.9,
-    descricao: "Romance clássico que explora relações e julgamentos sociais.",
+    imagem: "/imagens/orgulho_e_preconceito.webp",
   },
   {
     id: "4",
-    titulo: "Caminhos da Imaginação",
-    autor: "Lucas Fernandes",
-    preco: 44.9,
+    titulo: "É Assim Que Acaba",
+    autor: "Colleen Hoover",
+    preco: 37.0,
+    imagem: "/imagens/EAssimQueAcaba.jpg",
   },
   {
     id: "5",
-    titulo: "O Som do Silêncio",
-    autor: "Carolina Mendes",
-    preco: 25.0,
+    titulo: "A Garota do Lago",
+    autor: "Charlie Donlea",
+    preco: 15.0,
+    imagem: "/imagens/AGarotaLago.jpg",
   },
   {
     id: "6",
-    titulo: "Segredos da Montanha",
-    autor: "Rafael Lima",
-    preco: 42.5,
+    titulo: "Deixada para Trás",
+    autor: "Charlie Donlea",
+    preco: 28.0,
+    imagem: "/imagens/DeixadaParaTras.jpg",
   },
   {
     id: "7",
-    titulo: "Inspiração Infinita",
-    autor: "Beatriz Duarte",
-    preco: 38.7,
+    titulo: "Todas as Suas (Im)Perfeições",
+    autor: "Colleen Hoover",
+    preco: 38.0,
+    imagem: "/imagens/TodasImperfeicoes.jpg",
   },
-  { id: "8", titulo: "O Tempo das Flores", autor: "Marina Costa", preco: 31.2 },
-  { id: "9", titulo: "Luz na Nevoa", autor: "Daniel Oliveira", preco: 36.0 },
+  {
+    id: "8",
+    titulo: "A Empregada",
+    autor: "Freida McFadden",
+    preco: 31.2,
+    imagem: "/imagens/AEmpregada.jpg",
+  },
+  {
+    id: "9",
+    titulo: "A Seleção",
+    autor: "Kiera Cass",
+    preco: 36.0,
+    imagem: "/imagens/ASelecao.jpg",
+  },
   {
     id: "10",
-    titulo: "A Biblioteca do Fim do Mundo",
-    autor: "Fernanda Reis",
-    preco: 49.9,
+    titulo: "A Biblioteca da Meia-Noite",
+    autor: "Matt Haig",
+    preco: 36.0,
+    imagem: "/imagens/BibliotecaMeiaNoite.jpg",
   },
 ];
 
@@ -130,6 +149,17 @@ const Catalogo = () => {
       <Grid>
         {livrosFake.map((livro) => (
           <Card key={livro.id}>
+            <img
+              src={livro.imagem}
+              alt={`Capa do livro ${livro.titulo}`}
+              style={{
+                width: "120px",
+                height: "180px",
+                objectFit: "cover",
+                borderRadius: "6px",
+                marginBottom: "1rem",
+              }}
+            />
             <h3>{livro.titulo}</h3>
             <p>{livro.autor}</p>
             <p>R$ {livro.preco.toFixed(2)}</p>

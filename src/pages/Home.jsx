@@ -140,7 +140,7 @@ const Home = () => {
   return (
     <HomeWrapper>
       <Banner>
-        <Titulo>Bem-vindo à Livraria da Iara 💙</Titulo>
+        <Titulo>Bem-vindo à Livraria Alkmim, Baldez, Versiane 💙</Titulo>
         <Subtitulo>
           Onde cada página é um novo começo — escolha o seu próximo livro agora
           mesmo.
