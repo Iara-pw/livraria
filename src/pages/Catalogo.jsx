@@ -1,5 +1,174 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+
+// Lista inicial de livros
+const livrosFakeInicial = [
+  {
+    id: "1",
+    titulo: "O Pequeno Príncipe",
+    autor: "Antoine de Saint-Exupéry",
+    preco: 19.9,
+  },
+  {
+    id: "2",
+    titulo: "A Revolução dos Bichos",
+    autor: "George Orwell",
+    preco: 24.9,
+  },
+  {
+    id: "3",
+    titulo: "Orgulho e Preconceito",
+    autor: "Jane Austen",
+    preco: 34.9,
+  },
+  {
+    id: "4",
+    titulo: "Caminhos da Imaginação",
+    autor: "Lucas Fernandes",
+    preco: 44.9,
+  },
+  {
+    id: "5",
+    titulo: "O Som do Silêncio",
+    autor: "Carolina Mendes",
+    preco: 25.0,
+  },
+  {
+    id: "6",
+    titulo: "Segredos da Montanha",
+    autor: "Rafael Lima",
+    preco: 42.5,
+  },
+  {
+    id: "7",
+    titulo: "Inspiração Infinita",
+    autor: "Beatriz Duarte",
+    preco: 38.7,
+  },
+  {
+    id: "8",
+    titulo: "O Tempo das Flores",
+    autor: "Marina Costa",
+    preco: 31.2,
+  },
+  {
+    id: "9",
+    titulo: "Luz na Nevoa",
+    autor: "Daniel Oliveira",
+    preco: 36.0,
+  },
+  {
+    id: "10",
+    titulo: "A Biblioteca do Fim do Mundo",
+    autor: "Fernanda Reis",
+    preco: 49.9,
+  },
+];
+
+// Componente principal
+const Catalogo = () => {
+  const [mostrarModal, setMostrarModal] = useState(false);
+
+  const [livros, setLivros] = useState(() => {
+    const livrosSalvos = localStorage.getItem("livros");
+    return livrosSalvos ? JSON.parse(livrosSalvos) : livrosFakeInicial;
+  });
+
+  const [novoLivro, setNovoLivro] = useState({
+    titulo: "",
+    autor: "",
+    preco: "",
+  });
+
+  const handleCadastro = () => {
+    const novoId = livros.length + 1;
+    const novo = {
+      id: novoId.toString(),
+      titulo: novoLivro.titulo,
+      autor: novoLivro.autor,
+      preco: parseFloat(novoLivro.preco),
+    };
+
+    const novaLista = [...livros, novo];
+    setLivros(novaLista);
+    localStorage.setItem("livros", JSON.stringify(novaLista));
+
+    setNovoLivro({ titulo: "", autor: "", preco: "" });
+    setMostrarModal(false);
+  };
+
+  // const resetarLivros = () => {
+  //   localStorage.removeItem("livros");
+  //   setLivros(livrosFakeInicial);
+  // };
+
+  return (
+    <CatalogoWrapper>
+      <h2>Catálogo</h2>
+
+      <ButtonsContainer>
+  <BotaoPadrao onClick={() => setMostrarModal(true)}>Cadastrar Livro</BotaoPadrao>
+</ButtonsContainer>
+
+
+      {mostrarModal && (
+        <ModalOverlay>
+          <ModalContent>
+            <h3>Cadastrar novo livro</h3>
+            <input
+              type="text"
+              placeholder="Título"
+              value={novoLivro.titulo}
+              onChange={(e) =>
+                setNovoLivro({ ...novoLivro, titulo: e.target.value })
+              }
+            />
+            <input
+              type="text"
+              placeholder="Autor"
+              value={novoLivro.autor}
+              onChange={(e) =>
+                setNovoLivro({ ...novoLivro, autor: e.target.value })
+              }
+            />
+            <input
+              type="number"
+              placeholder="Preço"
+              value={novoLivro.preco}
+              onChange={(e) =>
+                setNovoLivro({ ...novoLivro, preco: e.target.value })
+              }
+            />
+            <div>
+              <button onClick={handleCadastro}>Salvar</button>
+              <button onClick={() => setMostrarModal(false)}>Cancelar</button>
+            </div>
+          </ModalContent>
+        </ModalOverlay>
+      )}
+
+      <Grid>
+        {livros.map((livro) => (
+          <Card key={livro.id}>
+            <h3>{livro.titulo}</h3>
+            <p>{livro.autor}</p>
+            <p>R$ {livro.preco.toFixed(2)}</p>
+            <Link to={`/produto/${livro.id}`}>
+              <button>Ver mais</button>
+            </Link>
+          </Card>
+        ))}
+      </Grid>
+    </CatalogoWrapper>
+  );
+};
+
+export default Catalogo;
+
+//
+// ESTILOS
+//
 
 const CatalogoWrapper = styled.main`
   min-height: 100vh;
@@ -65,82 +234,63 @@ const Card = styled.div`
   }
 `;
 
-const livrosFake = [
-  {
-    id: "1",
-    titulo: "O Pequeno Príncipe",
-    autor: "Antoine de Saint-Exupéry",
-    preco: 19.9,
-    descricao: "Uma fábula poética sobre amizade, solidão e amor.",
-  },
-  {
-    id: "2",
-    titulo: "A Revolução dos Bichos",
-    autor: "George Orwell",
-    preco: 24.9,
-    descricao: "Uma crítica satírica ao totalitarismo contada por animais.",
-  },
-  {
-    id: "3",
-    titulo: "Orgulho e Preconceito",
-    autor: "Jane Austen",
-    preco: 34.9,
-    descricao: "Romance clássico que explora relações e julgamentos sociais.",
-  },
-  {
-    id: "4",
-    titulo: "Caminhos da Imaginação",
-    autor: "Lucas Fernandes",
-    preco: 44.9,
-  },
-  {
-    id: "5",
-    titulo: "O Som do Silêncio",
-    autor: "Carolina Mendes",
-    preco: 25.0,
-  },
-  {
-    id: "6",
-    titulo: "Segredos da Montanha",
-    autor: "Rafael Lima",
-    preco: 42.5,
-  },
-  {
-    id: "7",
-    titulo: "Inspiração Infinita",
-    autor: "Beatriz Duarte",
-    preco: 38.7,
-  },
-  { id: "8", titulo: "O Tempo das Flores", autor: "Marina Costa", preco: 31.2 },
-  { id: "9", titulo: "Luz na Nevoa", autor: "Daniel Oliveira", preco: 36.0 },
-  {
-    id: "10",
-    titulo: "A Biblioteca do Fim do Mundo",
-    autor: "Fernanda Reis",
-    preco: 49.9,
-  },
-];
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
-// Adicione mais livros aqui
+const ModalContent = styled.div`
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 400px;
 
-const Catalogo = () => {
-  return (
-    <CatalogoWrapper>
-      <h2>Catálogo</h2>
-      <Grid>
-        {livrosFake.map((livro) => (
-          <Card key={livro.id}>
-            <h3>{livro.titulo}</h3>
-            <p>{livro.autor}</p>
-            <p>R$ {livro.preco.toFixed(2)}</p>
-            <Link to={`/produto/${livro.id}`}>
-              <button>Ver mais</button>
-            </Link>
-          </Card>
-        ))}
-      </Grid>
-    </CatalogoWrapper>
-  );
-};
+  h3 {
+    margin-top: 0;
+  }
 
-export default Catalogo;
+  input {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+
+  button {
+    padding: 0.5rem 1rem;
+    background: #99d6f2;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 1rem;
+  }
+`;
+
+const ButtonsContainer = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+`;
+const BotaoPadrao = styled.button`
+  background-color: #99d6f2;
+  color: #1e1e1e;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #b3eafc;
+  }
+`;
