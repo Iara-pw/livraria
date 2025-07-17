@@ -66,9 +66,9 @@ const livrosFakeInicial = [
   },
 ];
 
-// Componente principal
 const Catalogo = () => {
   const [mostrarModal, setMostrarModal] = useState(false);
+  const [busca, setBusca] = useState("");
 
   const [livros, setLivros] = useState(() => {
     const livrosSalvos = localStorage.getItem("livros");
@@ -98,19 +98,27 @@ const Catalogo = () => {
     setMostrarModal(false);
   };
 
-  // const resetarLivros = () => {
-  //   localStorage.removeItem("livros");
-  //   setLivros(livrosFakeInicial);
-  // };
+  const livrosFiltrados = livros.filter((livro) =>
+    livro.titulo.toLowerCase().includes(busca.toLowerCase()) ||
+    livro.autor.toLowerCase().includes(busca.toLowerCase())
+  );
 
   return (
     <CatalogoWrapper>
       <h2>Catálogo</h2>
 
       <ButtonsContainer>
-  <BotaoPadrao onClick={() => setMostrarModal(true)}>Cadastrar Livro</BotaoPadrao>
-</ButtonsContainer>
+        <BotaoPadrao onClick={() => setMostrarModal(true)}>
+          Cadastrar Livro
+        </BotaoPadrao>
+      </ButtonsContainer>
 
+      <InputBusca
+        type="text"
+        placeholder="Buscar por título ou autor..."
+        value={busca}
+        onChange={(e) => setBusca(e.target.value)}
+      />
 
       {mostrarModal && (
         <ModalOverlay>
@@ -149,16 +157,20 @@ const Catalogo = () => {
       )}
 
       <Grid>
-        {livros.map((livro) => (
-          <Card key={livro.id}>
-            <h3>{livro.titulo}</h3>
-            <p>{livro.autor}</p>
-            <p>R$ {livro.preco.toFixed(2)}</p>
-            <Link to={`/produto/${livro.id}`}>
-              <button>Ver mais</button>
-            </Link>
-          </Card>
-        ))}
+        {livrosFiltrados.length > 0 ? (
+          livrosFiltrados.map((livro) => (
+            <Card key={livro.id}>
+              <h3>{livro.titulo}</h3>
+              <p>{livro.autor}</p>
+              <p>R$ {livro.preco.toFixed(2)}</p>
+              <Link to={`/produto/${livro.id}`}>
+                <button>Ver mais</button>
+              </Link>
+            </Card>
+          ))
+        ) : (
+          <p>Nenhum livro encontrado.</p>
+        )}
       </Grid>
     </CatalogoWrapper>
   );
@@ -281,6 +293,7 @@ const ButtonsContainer = styled.div`
   gap: 1rem;
   margin-bottom: 1rem;
 `;
+
 const BotaoPadrao = styled.button`
   background-color: #99d6f2;
   color: #1e1e1e;
@@ -294,3 +307,14 @@ const BotaoPadrao = styled.button`
     background-color: #b3eafc;
   }
 `;
+
+const InputBusca = styled.input`
+  width: 100%;
+  max-width: 400px;
+  padding: 0.6rem 1rem;
+  margin-top: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+`;
+
