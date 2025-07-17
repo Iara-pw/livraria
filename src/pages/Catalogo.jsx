@@ -76,9 +76,10 @@ const livrosFake = [
   },
 ];
 
-// Componente principal
 const Catalogo = () => {
   const [mostrarModal, setMostrarModal] = useState(false);
+  const [busca, setBusca] = useState("");
+
   const [livros, setLivros] = useState(() => {
     const livrosSalvos = localStorage.getItem("livros");
     return livrosSalvos ? JSON.parse(livrosSalvos) : livrosFake;
@@ -106,15 +107,15 @@ const Catalogo = () => {
     setLivros(novaLista);
     localStorage.setItem("livros", JSON.stringify(novaLista));
 
-    setNovoLivro({
-      titulo: "",
-      autor: "",
-      preco: "",
-      imagem: "",
-    });
-
+    setNovoLivro({ titulo: "", autor: "", preco: "", imagem: "" });
     setMostrarModal(false);
   };
+
+  const livrosFiltrados = livros.filter(
+    (livro) =>
+      livro.titulo.toLowerCase().includes(busca.toLowerCase()) ||
+      livro.autor.toLowerCase().includes(busca.toLowerCase())
+  );
 
   return (
     <CatalogoWrapper>
@@ -125,6 +126,13 @@ const Catalogo = () => {
           Cadastrar Livro
         </BotaoPadrao>
       </ButtonsContainer>
+
+      <InputBusca
+        type="text"
+        placeholder="Buscar por título ou autor..."
+        value={busca}
+        onChange={(e) => setBusca(e.target.value)}
+      />
 
       {mostrarModal && (
         <ModalOverlay>
@@ -171,29 +179,33 @@ const Catalogo = () => {
       )}
 
       <Grid>
-        {livros.map((livro) => (
-          <Card key={livro.id}>
-            {livro.imagem && (
-              <img
-                src={livro.imagem}
-                alt={`Capa do livro ${livro.titulo}`}
-                style={{
-                  width: "120px",
-                  height: "180px",
-                  objectFit: "cover",
-                  borderRadius: "6px",
-                  marginBottom: "1rem",
-                }}
-              />
-            )}
-            <h3>{livro.titulo}</h3>
-            <p>{livro.autor}</p>
-            <p>R$ {livro.preco.toFixed(2)}</p>
-            <Link to={`/produto/${livro.id}`}>
-              <button>Ver mais</button>
-            </Link>
-          </Card>
-        ))}
+        {livrosFiltrados.length > 0 ? (
+          livrosFiltrados.map((livro) => (
+            <Card key={livro.id}>
+              {livro.imagem && (
+                <img
+                  src={livro.imagem}
+                  alt={`Capa do livro ${livro.titulo}`}
+                  style={{
+                    width: "120px",
+                    height: "180px",
+                    objectFit: "cover",
+                    borderRadius: "6px",
+                    marginBottom: "1rem",
+                  }}
+                />
+              )}
+              <h3>{livro.titulo}</h3>
+              <p>{livro.autor}</p>
+              <p>R$ {livro.preco.toFixed(2)}</p>
+              <Link to={`/produto/${livro.id}`}>
+                <button>Ver mais</button>
+              </Link>
+            </Card>
+          ))
+        ) : (
+          <p>Nenhum livro encontrado.</p>
+        )}
       </Grid>
     </CatalogoWrapper>
   );
@@ -286,37 +298,13 @@ const ModalContent = styled.div`
   padding: 2rem;
   border-radius: 10px;
   width: 100%;
-  max-width: 400px;
-
-  h3 {
-    margin-top: 0;
-  }
-
-  input {
-    width: 100%;
-    padding: 0.5rem;
-    margin-top: 0.5rem;
-    margin-bottom: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-  }
-
-  button {
-    padding: 0.5rem 1rem;
-    background: #99d6f2;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-right: 1rem;
-  }
+  max-width: 100%;
 `;
-
 const ButtonsContainer = styled.div`
   display: flex;
   gap: 1rem;
   margin-bottom: 1rem;
 `;
-
 const BotaoPadrao = styled.button`
   background-color: #99d6f2;
   color: #1e1e1e;
@@ -329,4 +317,13 @@ const BotaoPadrao = styled.button`
   &:hover {
     background-color: #b3eafc;
   }
+`;
+const InputBusca = styled.input`
+  padding: 0.8rem 1rem;
+  border: 1px solid #bcdff0;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 350px;
 `;
