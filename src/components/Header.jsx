@@ -46,7 +46,7 @@ const Header = () => {
   return (
     <HeaderContainer>
       <Nav>
-        <Logo>📘 Livraria Alkmim, Baldez, Versiane</Logo>
+        <Logo>📘 Livraria Baldez, Versiane</Logo>
         <Menu>
           <Link to="/">Início</Link>
           <Link to="/catalogo">Catálogo</Link>

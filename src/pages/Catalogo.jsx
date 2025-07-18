@@ -22,23 +22,67 @@ const Catalogo = () => {
     autor: "",
     preco: "",
     imagem: "",
+    descricao: "",
   });
 
   const handleCadastro = async () => {
     const novo = {
       titulo: novoLivro.titulo,
       autor: novoLivro.autor,
-      preco: parseFloat(novoLivro.preco),
+      // Converte para número. Se vazio ou inválido, define como 0 ou null, dependendo do que o backend espera
+      preco: novoLivro.preco ? parseFloat(novoLivro.preco) : 0, // Ou null, se o backend aceitar
       imagem: novoLivro.imagem || "/imagens/capa-padrao.jpg",
+      descricao: novoLivro.descricao,
     };
+
+    // NOVO: Log para ver os dados que serão enviados
+    console.log("Dados do novo livro a serem enviados:", novo);
+
+    // NOVO: Adiciona validação básica antes de enviar
+    if (!novo.titulo || !novo.autor || isNaN(novo.preco) || novo.preco <= 0) {
+      alert(
+        "Por favor, preencha o título, autor e um preço válido para o livro."
+      );
+      return; // Impede a requisição se os dados forem inválidos
+    }
 
     try {
       const res = await api.post("/produtos", novo);
-      setLivros((prev) => [...prev, res.data]);
-      setNovoLivro({ titulo: "", autor: "", preco: "", imagem: "" });
+      console.log("Resposta da API ao cadastrar:", res.data); // NOVO: Log da resposta de sucesso
+      setLivros((prev) => [...prev, { ...res.data }]);
+      setNovoLivro({
+        titulo: "",
+        autor: "",
+        preco: "",
+        imagem: "",
+        descricao: "",
+      });
       setMostrarModal(false);
     } catch (error) {
-      console.error("Erro ao cadastrar livro:", error);
+      console.error("Erro ao cadastrar livro (frontend):", error); // Mais específico
+      if (error.response) {
+        // O servidor respondeu com um status de erro (ex: 400, 500)
+        console.error("Dados do erro da API:", error.response.data);
+        console.error("Status do erro da API:", error.response.status);
+        alert(
+          `Erro ao cadastrar: ${
+            error.response.data.erro || "Erro desconhecido."
+          }`
+        );
+      } else if (error.request) {
+        // A requisição foi feita, mas não houve resposta (servidor offline?)
+        console.error("Nenhuma resposta recebida do servidor.");
+        alert(
+          "Não foi possível conectar ao servidor. Verifique se o backend está rodando."
+        );
+      } else {
+        // Algo aconteceu na configuração da requisição
+        console.error(
+          "Erro na configuração da requisição Axios:",
+          error.message
+        );
+        alert("Ocorreu um erro inesperado ao tentar cadastrar o livro.");
+      }
     }
   };
 
@@ -101,6 +145,15 @@ const Catalogo = () => {
                 setNovoLivro({ ...novoLivro, imagem: e.target.value })
               }
             />
+            <input
+              type="text"
+              placeholder="Descrição"
+              value={novoLivro.descricao}
+              onChange={(e) =>
+                setNovoLivro({ ...novoLivro, descricao: e.target.value })
+              }
+            />
+
             <div>
               <button onClick={handleCadastro}>Salvar</button>
               <button onClick={() => setMostrarModal(false)}>Cancelar</button>
@@ -112,7 +165,7 @@ const Catalogo = () => {
       <Grid>
         {livrosFiltrados.length > 0 ? (
           livrosFiltrados.map((livro) => (
-            <Card key={livro.id}>
+            <Card key={livro._id}>
               {livro.imagem && (
                 <img
                   src={livro.imagem}
@@ -129,7 +182,7 @@ const Catalogo = () => {
               <h3>{livro.titulo}</h3>
               <p>{livro.autor}</p>
               <p>R$ {livro.preco.toFixed(2)}</p>
-              <Link to={`/produto/${livro.id}`}>
+              <Link to={`/produto/${livro._id}`}>
                 <button>Ver mais</button>
               </Link>
             </Card>
