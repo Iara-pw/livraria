@@ -1,89 +1,21 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-
-// Lista de livros com imagens
-const livrosFake = [
-  {
-    id: "1",
-    titulo: "O Pequeno Príncipe",
-    autor: "Antoine de Saint-Exupéry",
-    preco: 19.9,
-    imagem: "/imagens/OPequenoPrincipe.jpg",
-  },
-  {
-    id: "2",
-    titulo: "A Revolução dos Bichos",
-    autor: "George Orwell",
-    preco: 24.9,
-    imagem: "/imagens/ARevolucaoBichos.jpg",
-  },
-  {
-    id: "3",
-    titulo: "Orgulho e Preconceito",
-    autor: "Jane Austen",
-    preco: 34.9,
-    imagem: "/imagens/orgulho_e_preconceito.webp",
-  },
-  {
-    id: "4",
-    titulo: "É Assim Que Acaba",
-    autor: "Colleen Hoover",
-    preco: 37.0,
-    imagem: "/imagens/EAssimQueAcaba.jpg",
-  },
-  {
-    id: "5",
-    titulo: "A Garota do Lago",
-    autor: "Charlie Donlea",
-    preco: 15.0,
-    imagem: "/imagens/AGarotaLago.jpg",
-  },
-  {
-    id: "6",
-    titulo: "Deixada para Trás",
-    autor: "Charlie Donlea",
-    preco: 28.0,
-    imagem: "/imagens/DeixadaParaTras.jpg",
-  },
-  {
-    id: "7",
-    titulo: "Todas as Suas (Im)Perfeições",
-    autor: "Colleen Hoover",
-    preco: 38.0,
-    imagem: "/imagens/TodasImperfeicoes.jpg",
-  },
-  {
-    id: "8",
-    titulo: "A Empregada",
-    autor: "Freida McFadden",
-    preco: 31.2,
-    imagem: "/imagens/AEmpregada.jpg",
-  },
-  {
-    id: "9",
-    titulo: "A Seleção",
-    autor: "Kiera Cass",
-    preco: 36.0,
-    imagem: "/imagens/ASelecao.jpg",
-  },
-  {
-    id: "10",
-    titulo: "A Biblioteca da Meia-Noite",
-    autor: "Matt Haig",
-    preco: 36.0,
-    imagem: "/imagens/BibliotecaMeiaNoite.jpg",
-  },
-];
+import { useEffect } from "react";
+import api from "../api";
 
 const Catalogo = () => {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [busca, setBusca] = useState("");
 
-  const [livros, setLivros] = useState(() => {
-    const livrosSalvos = localStorage.getItem("livros");
-    return livrosSalvos ? JSON.parse(livrosSalvos) : livrosFake;
-  });
+  const [livros, setLivros] = useState([]);
+
+  useEffect(() => {
+    api
+      .get("/produtos")
+      .then((res) => setLivros(res.data))
+      .catch((err) => console.error("Erro ao buscar livros:", err));
+  }, []);
 
   const [novoLivro, setNovoLivro] = useState({
     titulo: "",
@@ -92,23 +24,22 @@ const Catalogo = () => {
     imagem: "",
   });
 
-  const handleCadastro = () => {
-    const novoId = livros.length + 1;
-
+  const handleCadastro = async () => {
     const novo = {
-      id: novoId.toString(),
       titulo: novoLivro.titulo,
       autor: novoLivro.autor,
       preco: parseFloat(novoLivro.preco),
       imagem: novoLivro.imagem || "/imagens/capa-padrao.jpg",
     };
 
-    const novaLista = [...livros, novo];
-    setLivros(novaLista);
-    localStorage.setItem("livros", JSON.stringify(novaLista));
-
-    setNovoLivro({ titulo: "", autor: "", preco: "", imagem: "" });
-    setMostrarModal(false);
+    try {
+      const res = await api.post("/produtos", novo);
+      setLivros((prev) => [...prev, res.data]);
+      setNovoLivro({ titulo: "", autor: "", preco: "", imagem: "" });
+      setMostrarModal(false);
+    } catch (error) {
+      console.error("Erro ao cadastrar livro:", error);
+    }
   };
 
   const livrosFiltrados = livros.filter(
