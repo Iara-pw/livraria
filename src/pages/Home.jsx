@@ -114,14 +114,14 @@ const CardLivro = styled.div`
 
 const livrosDestaque = [
   {
-    id: "1",
+    id: "687aa8f5f2c5cde5d8a9c3e9",
     titulo: "O Pequeno Príncipe",
     autor: "Antoine de Saint-Exupéry",
     preco: 29.9,
     capa: OPequenoPrincipe,
   },
   {
-    id: "2",
+    id: "687aeb514d48ae3f354fda08",
     titulo: "A Revolução dos Bichos",
     autor: "George Orwell",
     preco: 24.9,

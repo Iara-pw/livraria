@@ -1,25 +1,22 @@
-// Produto.jsx
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import api from "../api"; // Certifique-se de que o caminho está correto
-import useCarrinho from "../context/useCarrinho"; // Certifique-se de que o caminho está correto
+import api from "../api";
+import useCarrinho from "../context/useCarrinho";
 import { useState, useEffect } from "react";
 
-import { useNavigate } from "react-router-dom"; // deve estar no topo do arquivo
-
 const Produto = () => {
-  const { id } = useParams(); // Pega o 'id' da URL (ex: /produto/123 -> id = "123")
-  const { adicionarAoCarrinho } = useCarrinho(); // Hook do seu contexto de carrinho
+  const { id } = useParams();
+  const { adicionarAoCarrinho } = useCarrinho();
   const [livro, setLivro] = useState(null);
-  const [mensagem, setMensagem] = useState(""); // Mensagens de sucesso ou erro para o usuário
-  const [loading, setLoading] = useState(true); // Estado de carregamento
+  const [mensagem, setMensagem] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  const navigate = useNavigate(); // isso deve estar DENTRO da função Produto
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchLivro = async () => {
-      setLoading(true); // Inicia o carregamento
-      setMensagem(""); // Limpa mensagens anteriores
+      setLoading(true);
+      setMensagem("");
 
       if (!id) {
         setMensagem("Nenhum ID de livro fornecido na URL.");
@@ -28,44 +25,30 @@ const Produto = () => {
       }
 
       try {
-        // A URL da requisição será: http://localhost:3001/produtos/ID_DO_LIVRO
         const response = await api.get(`/produtos/${id}`);
         setLivro(response.data);
-        console.log("Dados do livro recebidos:", response.data); // Log para depuração
       } catch (err) {
-        console.error("Erro ao buscar livro:", err);
-
-        // Tratamento de erros mais robusto para o usuário
         if (err.response) {
-          // Resposta do servidor (status de erro como 404, 400, 500)
           if (err.response.status === 404) {
             setMensagem("Livro não encontrado.");
           } else if (err.response.status === 400) {
             setMensagem("ID de livro inválido.");
           } else {
-            setMensagem(
-              `Erro ao carregar livro: ${
-                err.response.statusText || "Erro no servidor"
-              }`
-            );
+            setMensagem("Erro ao carregar livro.");
           }
         } else if (err.request) {
-          // Requisição feita, mas sem resposta (servidor offline, rede)
-          setMensagem(
-            "Não foi possível conectar ao servidor. Verifique sua conexão ou se o servidor está online."
-          );
+          setMensagem("Servidor indisponível. Verifique sua conexão.");
         } else {
-          // Erro na configuração da requisição
-          setMensagem("Ocorreu um erro inesperado ao buscar o livro.");
+          setMensagem("Erro inesperado ao buscar o livro.");
         }
-        setLivro(null); // Garante que o livro é nulo se houver erro
+        setLivro(null);
       } finally {
-        setLoading(false); // Finaliza o carregamento, independentemente do sucesso/erro
+        setLoading(false);
       }
     };
 
     fetchLivro();
-  }, [id]); // O efeito roda novamente se o ID da URL mudar
+  }, [id]);
 
   if (loading) {
     return (
@@ -75,16 +58,20 @@ const Produto = () => {
     );
   }
 
-  // Se não houver livro (por exemplo, após um erro 404 ou 400)
   if (!livro) {
     return (
       <Wrapper>
-        <p>{mensagem || "Livro não encontrado."}</p>
-        {/* Você pode adicionar um botão para voltar ao catálogo aqui */}
-        {/* <Link to="/catalogo"><button>Voltar ao Catálogo</button></Link> */}
+        <Mensagem>{mensagem || "Livro não encontrado."}</Mensagem>
       </Wrapper>
     );
   }
+
+  const handleAdicionar = () => {
+    adicionarAoCarrinho(livro);
+    setMensagem("✔ Livro adicionado com sucesso!");
+
+    setTimeout(() => setMensagem(""), 3000);
+  };
 
   return (
     <Wrapper>
@@ -93,70 +80,23 @@ const Produto = () => {
         <Titulo>{livro.titulo}</Titulo>
         <Autor>{livro.autor}</Autor>
         <Descricao>{livro.descricao || "Descrição indisponível."}</Descricao>
-        <Preco>R$ {livro.preco ? livro.preco.toFixed(2) : "0.00"}</Preco>{" "}
-        {/* Garante que preco.toFixed(2) só seja chamado se preco existir */}
-        <Botao
-          onClick={() => {
-            adicionarAoCarrinho(livro);
-            setMensagem("✔ Livro adicionado com sucesso!");
+        <Preco>R$ {livro.preco ? livro.preco.toFixed(2) : "0.00"}</Preco>
+        <Botao onClick={handleAdicionar}>Adicionar ao carrinho</Botao>
 
-            setTimeout(() => setMensagem(""), 2000); // Limpa a mensagem após 2 segundos
-          }}
-        >
-          Adicionar ao carrinho
-        </Botao>
         {mensagem && (
-          <>
-            <p
-              style={{
-                color: mensagem.startsWith("✔") ? "#2c7" : "#d9534f",
-                marginTop: "1rem",
-              }}
-            >
-              {mensagem}
-            </p>
-
-            <div
-              style={{
-                color: mensagem.startsWith("✔") ? "#2c7" : "#d9534f",
-                marginTop: "1rem",
-                background: "#e7fff3",
-                padding: "1rem",
-                borderRadius: "8px",
-              }}
-            >
-              <p>{mensagem}</p>
-              {mensagem.startsWith("✔") && (
-                <div style={{ marginTop: "0.5rem" }}>
-                  <button
-                    onClick={() => navigate("/catalogo")}
-                    style={{
-                      marginRight: "1rem",
-                      padding: "0.5rem 1rem",
-                      background: "#d0eaff",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    🔙 Voltar ao Catálogo
-                  </button>
-                  <button
-                    onClick={() => navigate("/carrinho")}
-                    style={{
-                      padding: "0.5rem 1rem",
-                      background: "#ffe0b3",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    🛒 Ir para o Carrinho
-                  </button>
-                </div>
-              )}
-            </div>
-          </>
+          <Mensagem destaque={mensagem.startsWith("✔")}>
+            {mensagem}
+            {mensagem.startsWith("✔") && (
+              <div style={{ marginTop: "0.8rem" }}>
+                <BotaoSecundario onClick={() => navigate("/catalogo")}>
+                  🔙 Voltar ao Catálogo
+                </BotaoSecundario>
+                <BotaoSecundario onClick={() => navigate("/carrinho")}>
+                  🛒 Ir para o Carrinho
+                </BotaoSecundario>
+              </div>
+            )}
+          </Mensagem>
         )}
       </Card>
     </Wrapper>
@@ -165,8 +105,7 @@ const Produto = () => {
 
 export default Produto;
 
-// Estilos (já estavam no seu código, sem alterações necessárias)
-
+// Estilos
 const Wrapper = styled.main`
   display: flex;
   flex-direction: column;
@@ -227,4 +166,25 @@ const Botao = styled.button`
   &:hover {
     background-color: #b3eafc;
   }
+`;
+
+const BotaoSecundario = styled.button`
+  padding: 0.5rem 1rem;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 5px;
+  margin-right: 1rem;
+  cursor: pointer;
+
+  &:hover {
+    background: #e0e0e0;
+  }
+`;
+
+const Mensagem = styled.div`
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-radius: 8px;
+  color: ${({ destaque }) => (destaque ? "#2c7" : "#d9534f")};
+  background-color: ${({ destaque }) => (destaque ? "#e7fff3" : "#ffe7e7")};
 `;

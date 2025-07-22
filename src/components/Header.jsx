@@ -52,7 +52,6 @@ const Header = () => {
           <Link to="/catalogo">Catálogo</Link>
           <Link to="/carrinho">Carrinho</Link>
           <Link to="/login">Login</Link>
-          <Link to="/contato">Contato</Link>
         </Menu>
       </Nav>
     </HeaderContainer>

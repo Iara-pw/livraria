@@ -113,25 +113,25 @@ const Carrinho = () => {
 
   const finalizarCompra = () => {
     if (!autenticado) {
-      alert("Você precisa estar logado para finalizar a compra.");
-      navigate("/login");
-    } else {
-      alert("Compra finalizada com sucesso! ✨");
-      // Aqui você pode limpar o carrinho, se quiser
+      setMensagemErro(
+        "Você precisa estar logado para finalizar a compra. Redirecionando..."
+      );
+      setTimeout(() => {
+        setMensagemErro("");
+        navigate("/login");
+      }, 3000);
+      return;
     }
 
-    setMensagemErro(
-      "Você precisa estar logado para finalizar a compra. REDIRECIONANDO..."
-    );
+    setMensagemErro("Compra finalizada com sucesso! ✨");
+    // Aqui você pode limpar o carrinho, se quiser
+    // ex: limparCarrinho();
+
     setTimeout(() => {
       setMensagemErro("");
-      navigate("/login");
+      navigate("/");
     }, 3000);
-    return;
   };
-
-  alert("Compra finalizada com sucesso! ✨");
-  // Aqui você pode limpar o carrinho, se quiser
 
   return (
     <Wrapper>
