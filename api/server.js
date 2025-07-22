@@ -35,6 +35,7 @@ app.get("/", (req, res) => {
   res.send("📘 API da Livraria está viva!");
 });
 
+
 // Iniciar servidor
 app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
