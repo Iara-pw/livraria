@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import useCarrinho from "../context/useCarrinho";
 import useAuth from "../context/useAuth";
+import { useState } from "react";
 
 const Wrapper = styled.main`
   padding: 6rem 2rem 3rem;
@@ -89,7 +90,21 @@ const BotaoFinalizar = styled.button`
   }
 `;
 
+const MensagemErro = styled.div`
+  background-color: #ffe0e0;
+  color: #c00;
+  border: 1px solid #ffcccc;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  max-width: 600px;
+  text-align: center;
+  font-weight: bold;
+`;
+
 const Carrinho = () => {
+  const [mensagemErro, setMensagemErro] = useState("");
+
   const { carrinho, removerDoCarrinho } = useCarrinho();
   const { autenticado } = useAuth();
   const navigate = useNavigate();
@@ -104,14 +119,33 @@ const Carrinho = () => {
       alert("Compra finalizada com sucesso! ✨");
       // Aqui você pode limpar o carrinho, se quiser
     }
+
+    setMensagemErro(
+      "Você precisa estar logado para finalizar a compra. REDIRECIONANDO..."
+    );
+    setTimeout(() => {
+      setMensagemErro("");
+      navigate("/login");
+    }, 3000);
+    return;
   };
+
+  alert("Compra finalizada com sucesso! ✨");
+  // Aqui você pode limpar o carrinho, se quiser
 
   return (
     <Wrapper>
       <Titulo>Seu Carrinho</Titulo>
 
+      {mensagemErro && <MensagemErro>{mensagemErro}</MensagemErro>}
+
       {carrinho.length === 0 ? (
-        <p>O carrinho está vazio 🛒</p>
+        <>
+          <p>O carrinho está vazio 🛒</p>
+          <BotaoFinalizar onClick={() => navigate("/catalogo")}>
+            Voltar ao Catálogo
+          </BotaoFinalizar>
+        </>
       ) : (
         <>
           <Lista>
@@ -137,5 +171,4 @@ const Carrinho = () => {
     </Wrapper>
   );
 };
-
 export default Carrinho;

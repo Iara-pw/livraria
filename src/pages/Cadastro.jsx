@@ -57,7 +57,24 @@ const Mensagem = styled.p`
   text-align: center;
 `;
 
+const Modal = styled.div`
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border: 2px solid #a3e5bd;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  color: #1e1e1e;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-in-out;
+`;
+
 const Cadastro = () => {
+  const [mensagem, setMensagem] = useState("");
+
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -69,68 +86,73 @@ const Cadastro = () => {
 
     if (!nome || !email || !senha || !confirmar) {
       alert("Por favor, preencha todos os campos 💙");
+
+      setMensagem("Por favor, preencha todos os campos 💙");
+
       return;
     }
 
     if (senha !== confirmar) {
-      alert("As senhas não coincidem 😥");
+      setMensagem("As senhas não coincidem 😥");
       return;
     }
 
-    const usuario = {
-      nome,
-      email,
-      senha,
-    };
+    const usuario = { nome, email, senha };
+
+    setMensagem("Cadastro realizado com sucesso! Agora é só fazer login ✨");
+    setTimeout(() => {
+      navigate("/login");
+    }, 3000);
 
     localStorage.setItem("usuario", JSON.stringify(usuario));
-    alert("Cadastro realizado com sucesso! Agora é só fazer login ✨");
-    navigate("/login");
   };
 
   return (
-    <Wrapper>
-      <Formulario onSubmit={handleCadastro}>
-        <Titulo>Cadastro 💙</Titulo>
+    <>
+      {mensagem && <Modal>{mensagem}</Modal>}
+      <Wrapper>
+        <Formulario onSubmit={handleCadastro}>
+          <Titulo>Cadastro 💙</Titulo>
 
-        <Campo
-          type="text"
-          placeholder="Seu nome"
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
-        />
+          <Campo
+            type="text"
+            placeholder="Seu nome"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+          />
 
-        <Campo
-          type="email"
-          placeholder="Seu e-mail"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+          <Campo
+            type="email"
+            placeholder="Seu e-mail"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
-        <Campo
-          type="password"
-          placeholder="Senha"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-        />
+          <Campo
+            type="password"
+            placeholder="Senha"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+          />
 
-        <Campo
-          type="password"
-          placeholder="Confirmar senha"
-          value={confirmar}
-          onChange={(e) => setConfirmar(e.target.value)}
-        />
+          <Campo
+            type="password"
+            placeholder="Confirmar senha"
+            value={confirmar}
+            onChange={(e) => setConfirmar(e.target.value)}
+          />
 
-        <Botao type="submit">Cadastrar</Botao>
+          <Botao type="submit">Cadastrar</Botao>
 
-        <Mensagem>
-          Já tem uma conta?{" "}
-          <Link to="/login" style={{ color: "#3c82f6", fontWeight: "bold" }}>
-            Faça login
-          </Link>
-        </Mensagem>
-      </Formulario>
-    </Wrapper>
+          <Mensagem>
+            Já tem uma conta?{" "}
+            <Link to="/login" style={{ color: "#3c82f6", fontWeight: "bold" }}>
+              Faça login
+            </Link>
+          </Mensagem>
+        </Formulario>
+      </Wrapper>
+    </>
   );
 };
 

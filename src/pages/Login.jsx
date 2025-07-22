@@ -59,6 +59,12 @@ const Mensagem = styled.p`
 `;
 
 const Login = () => {
+<<<<<<< HEAD
+=======
+  const [mensagem, setMensagem] = useState("");
+  const [tipoMensagem, setTipoMensagem] = useState("");
+
+>>>>>>> master
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
 
@@ -76,15 +82,54 @@ const Login = () => {
       usuarioSalvo.senha === senha
     ) {
       login(); // ativa login no contexto
+<<<<<<< HEAD
       alert(`Bem-vinda de volta, ${usuarioSalvo.nome} 💙`);
       navigate("/"); // redireciona para a página principal
     } else {
       alert("E-mail ou senha inválidos. Tente novamente 😥");
+=======
+      setMensagem(`Bem-vinde de volta, ${usuarioSalvo.nome} 💙`);
+      setTipoMensagem("sucesso");
+
+      setTimeout(() => {
+        setMensagem("");
+        navigate("/");
+      }, 2000);
+    } else {
+      setMensagem("E-mail ou senha inválidos. Tente novamente 😥");
+      setTipoMensagem("erro");
+
+      setTimeout(() => {
+        setMensagem("");
+      }, 3000);
+>>>>>>> master
     }
   };
 
   return (
     <Wrapper>
+<<<<<<< HEAD
+=======
+      {mensagem && (
+        <div
+          style={{
+            background: tipoMensagem === "erro" ? "#fee2e2" : "#d1fae5",
+            color: tipoMensagem === "erro" ? "#991b1b" : "#065f46",
+            padding: "1rem 1.5rem",
+            borderRadius: "8px",
+            marginBottom: "1rem",
+            fontWeight: "bold",
+            textAlign: "center",
+            maxWidth: "450px",
+            width: "100%",
+            boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+          }}
+        >
+          {mensagem}
+        </div>
+      )}
+
+>>>>>>> master
       <Formulario onSubmit={handleLogin}>
         <Titulo>Login</Titulo>
 

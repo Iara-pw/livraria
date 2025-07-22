@@ -5,12 +5,16 @@ import api from "../api"; // Certifique-se de que o caminho está correto
 import useCarrinho from "../context/useCarrinho"; // Certifique-se de que o caminho está correto
 import { useState, useEffect } from "react";
 
+import { useNavigate } from "react-router-dom"; // deve estar no topo do arquivo
+
 const Produto = () => {
   const { id } = useParams(); // Pega o 'id' da URL (ex: /produto/123 -> id = "123")
   const { adicionarAoCarrinho } = useCarrinho(); // Hook do seu contexto de carrinho
   const [livro, setLivro] = useState(null);
   const [mensagem, setMensagem] = useState(""); // Mensagens de sucesso ou erro para o usuário
   const [loading, setLoading] = useState(true); // Estado de carregamento
+
+  const navigate = useNavigate(); // isso deve estar DENTRO da função Produto
 
   useEffect(() => {
     const fetchLivro = async () => {
@@ -95,20 +99,64 @@ const Produto = () => {
           onClick={() => {
             adicionarAoCarrinho(livro);
             setMensagem("✔ Livro adicionado com sucesso!");
+
             setTimeout(() => setMensagem(""), 2000); // Limpa a mensagem após 2 segundos
           }}
         >
           Adicionar ao carrinho
         </Botao>
         {mensagem && (
-          <p
-            style={{
-              color: mensagem.startsWith("✔") ? "#2c7" : "#d9534f",
-              marginTop: "1rem",
-            }}
-          >
-            {mensagem}
-          </p>
+          <>
+            <p
+              style={{
+                color: mensagem.startsWith("✔") ? "#2c7" : "#d9534f",
+                marginTop: "1rem",
+              }}
+            >
+              {mensagem}
+            </p>
+
+            <div
+              style={{
+                color: mensagem.startsWith("✔") ? "#2c7" : "#d9534f",
+                marginTop: "1rem",
+                background: "#e7fff3",
+                padding: "1rem",
+                borderRadius: "8px",
+              }}
+            >
+              <p>{mensagem}</p>
+              {mensagem.startsWith("✔") && (
+                <div style={{ marginTop: "0.5rem" }}>
+                  <button
+                    onClick={() => navigate("/catalogo")}
+                    style={{
+                      marginRight: "1rem",
+                      padding: "0.5rem 1rem",
+                      background: "#d0eaff",
+                      border: "none",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    🔙 Voltar ao Catálogo
+                  </button>
+                  <button
+                    onClick={() => navigate("/carrinho")}
+                    style={{
+                      padding: "0.5rem 1rem",
+                      background: "#ffe0b3",
+                      border: "none",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    🛒 Ir para o Carrinho
+                  </button>
+                </div>
+              )}
+            </div>
+          </>
         )}
       </Card>
     </Wrapper>
@@ -118,6 +166,7 @@ const Produto = () => {
 export default Produto;
 
 // Estilos (já estavam no seu código, sem alterações necessárias)
+
 const Wrapper = styled.main`
   display: flex;
   flex-direction: column;
