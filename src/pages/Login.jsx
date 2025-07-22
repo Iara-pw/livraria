@@ -59,15 +59,10 @@ const Mensagem = styled.p`
 `;
 
 const Login = () => {
-<<<<<<< HEAD
-=======
   const [mensagem, setMensagem] = useState("");
   const [tipoMensagem, setTipoMensagem] = useState("");
-
->>>>>>> master
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -82,19 +77,8 @@ const Login = () => {
       usuarioSalvo.senha === senha
     ) {
       login(); // ativa login no contexto
-<<<<<<< HEAD
       alert(`Bem-vinda de volta, ${usuarioSalvo.nome} 💙`);
       navigate("/"); // redireciona para a página principal
-    } else {
-      alert("E-mail ou senha inválidos. Tente novamente 😥");
-=======
-      setMensagem(`Bem-vinde de volta, ${usuarioSalvo.nome} 💙`);
-      setTipoMensagem("sucesso");
-
-      setTimeout(() => {
-        setMensagem("");
-        navigate("/");
-      }, 2000);
     } else {
       setMensagem("E-mail ou senha inválidos. Tente novamente 😥");
       setTipoMensagem("erro");
@@ -102,14 +86,11 @@ const Login = () => {
       setTimeout(() => {
         setMensagem("");
       }, 3000);
->>>>>>> master
     }
   };
 
   return (
     <Wrapper>
-<<<<<<< HEAD
-=======
       {mensagem && (
         <div
           style={{
@@ -129,7 +110,6 @@ const Login = () => {
         </div>
       )}
 
->>>>>>> master
       <Formulario onSubmit={handleLogin}>
         <Titulo>Login</Titulo>
 
