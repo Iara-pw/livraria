@@ -10,6 +10,7 @@ const Produto = () => {
   const [livro, setLivro] = useState(null);
   const [mensagem, setMensagem] = useState("");
   const [loading, setLoading] = useState(true);
+  const [adicionado, setAdicionado] = useState(false);
 
   const navigate = useNavigate();
 
@@ -69,6 +70,7 @@ const Produto = () => {
   const handleAdicionar = () => {
     adicionarAoCarrinho(livro);
     setMensagem("✔ Livro adicionado com sucesso!");
+    setAdicionado(true);
 
     setTimeout(() => setMensagem(""), 3000);
   };
@@ -84,19 +86,18 @@ const Produto = () => {
         <Botao onClick={handleAdicionar}>Adicionar ao carrinho</Botao>
 
         {mensagem && (
-          <Mensagem destaque={mensagem.startsWith("✔")}>
-            {mensagem}
-            {mensagem.startsWith("✔") && (
-              <div style={{ marginTop: "0.8rem" }}>
-                <BotaoSecundario onClick={() => navigate("/catalogo")}>
-                  🔙 Voltar ao Catálogo
-                </BotaoSecundario>
-                <BotaoSecundario onClick={() => navigate("/carrinho")}>
-                  🛒 Ir para o Carrinho
-                </BotaoSecundario>
-              </div>
-            )}
-          </Mensagem>
+          <Mensagem destaque={mensagem.startsWith("✔")}>{mensagem}</Mensagem>
+        )}
+
+        {adicionado && (
+          <div style={{ marginTop: "1.2rem" }}>
+            <BotaoSecundario onClick={() => navigate("/catalogo")}>
+              🔙 Voltar ao Catálogo
+            </BotaoSecundario>
+            <BotaoSecundario onClick={() => navigate("/carrinho")}>
+              🛒 Ir para o Carrinho
+            </BotaoSecundario>
+          </div>
         )}
       </Card>
     </Wrapper>

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styled from "styled-components";
-import useAuth from "../context/useAuth";
+import useAuth from "../context/useAuth"; // Assumindo que você tem um contexto de autenticação
+import api from "../api"; // Importe a instância do Axios para a API
 
 const Wrapper = styled.main`
   min-height: 100vh;
@@ -58,31 +59,67 @@ const Mensagem = styled.p`
   text-align: center;
 `;
 
+// Você pode reutilizar o Modal do seu componente de Cadastro ou criar um separado
+const Modal = styled.div`
+  position: fixed;
+  top: 20%; /* Ajuste conforme necessário */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border: 2px solid #a3e5bd;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  color: #1e1e1e;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-in-out;
+`;
+
 const Login = () => {
   const [mensagem, setMensagem] = useState("");
   const [tipoMensagem, setTipoMensagem] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const { login } = useAuth();
+  const { login } = useAuth(); // Se o seu useAuth realmente lida com o estado de login
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
+    // Tornar a função assíncrona
     e.preventDefault();
 
-    const usuarioSalvo = JSON.parse(localStorage.getItem("usuario"));
-
-    if (
-      usuarioSalvo &&
-      usuarioSalvo.email === email &&
-      usuarioSalvo.senha === senha
-    ) {
-      login(); // ativa login no contexto
-      alert(`Bem-vinda de volta, ${usuarioSalvo.nome} 💙`);
-      navigate("/"); // redireciona para a página principal
-    } else {
-      setMensagem("E-mail ou senha inválidos. Tente novamente 😥");
+    if (!email || !senha) {
+      setMensagem("Por favor, preencha todos os campos.");
       setTipoMensagem("erro");
+      return;
+    }
 
+    try {
+      // Faz a requisição para a sua API de login no backend
+      // Certifique-se de que a URL corresponde à sua rota de login (ex: /auth/login)
+      const resposta = await api.post("/auth/login", { email, senha });
+
+      if (resposta.status === 200) {
+        setMensagem("Login realizado com sucesso! Bem-vindo(a) de volta ✨");
+        setTipoMensagem("sucesso");
+
+        // Aqui você pode armazenar o token e/ou dados do usuário, se a API retornar
+        // Por exemplo: localStorage.setItem('token', resposta.data.token);
+        // E chamar sua função de login do contexto para atualizar o estado global
+        login(resposta.data.usuario, resposta.data.token); // Adapte para o que seu useAuth espera
+
+        setTimeout(() => {
+          navigate("/"); // Redireciona para a página principal ou dashboard
+        }, 2000);
+      }
+    } catch (erro) {
+      console.error("Erro ao tentar fazer login:", erro);
+      setMensagem(
+        erro.response?.data?.mensagem ||
+          "Erro ao fazer login. Verifique suas credenciais."
+      );
+      setTipoMensagem("erro");
+    } finally {
+      // Opcional: Limpar a mensagem após um tempo se for um modal temporário
       setTimeout(() => {
         setMensagem("");
       }, 3000);
@@ -91,23 +128,17 @@ const Login = () => {
 
   return (
     <Wrapper>
+      {/* Usando o Modal estilizado para exibir mensagens */}
       {mensagem && (
-        <div
+        <Modal
           style={{
             background: tipoMensagem === "erro" ? "#fee2e2" : "#d1fae5",
             color: tipoMensagem === "erro" ? "#991b1b" : "#065f46",
-            padding: "1rem 1.5rem",
-            borderRadius: "8px",
-            marginBottom: "1rem",
-            fontWeight: "bold",
-            textAlign: "center",
-            maxWidth: "450px",
-            width: "100%",
-            boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+            borderColor: tipoMensagem === "erro" ? "#fecaca" : "#a3e5bd",
           }}
         >
           {mensagem}
-        </div>
+        </Modal>
       )}
 
       <Formulario onSubmit={handleLogin}>

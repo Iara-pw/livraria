@@ -3,7 +3,9 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-import produtosRoutes from "./routes/produtos.js";
+import produtosRouter from "./routes/produtos.js";
+import usuariosRouter from "./routes/usuarios.js";
+import authRouter from "./routes/auth.js";
 
 dotenv.config();
 
@@ -11,7 +13,11 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  })
+);
 app.use(express.json());
 
 // Conexão com MongoDB Atlas
@@ -28,7 +34,9 @@ mongoose
   });
 
 // Rotas
-app.use("/produtos", produtosRoutes);
+app.use("/produtos", produtosRouter);
+app.use("/usuarios", usuariosRouter);
+app.use("/auth", authRouter);
 
 // Rota raiz (teste rápido)
 app.get("/", (req, res) => {

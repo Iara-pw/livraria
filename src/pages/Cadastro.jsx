@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { useNavigate, Link } from "react-router-dom";
+import api from "../api"; // <-- importando a API
 
 const Wrapper = styled.main`
   min-height: 100vh;
@@ -74,6 +75,7 @@ const Modal = styled.div`
 
 const Cadastro = () => {
   const [mensagem, setMensagem] = useState("");
+  const [tipoMensagem, setTipoMensagem] = useState("");
 
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
@@ -81,35 +83,57 @@ const Cadastro = () => {
   const [confirmar, setConfirmar] = useState("");
   const navigate = useNavigate();
 
-  const handleCadastro = (e) => {
+  const handleCadastro = async (e) => {
     e.preventDefault();
 
     if (!nome || !email || !senha || !confirmar) {
-      alert("Por favor, preencha todos os campos 💙");
-
       setMensagem("Por favor, preencha todos os campos 💙");
-
+      setTipoMensagem("erro");
       return;
     }
 
     if (senha !== confirmar) {
       setMensagem("As senhas não coincidem 😥");
+      setTipoMensagem("erro");
       return;
     }
 
-    const usuario = { nome, email, senha };
+    try {
+      const resposta = await api.post("/usuarios", { nome, email, senha });
 
-    setMensagem("Cadastro realizado com sucesso! Agora é só fazer login ✨");
-    setTimeout(() => {
-      navigate("/login");
-    }, 3000);
+      if (resposta.status === 201 || resposta.status === 200) {
+        setMensagem(
+          "Cadastro realizado com sucesso! Agora é só fazer login ✨"
+        );
+        setTipoMensagem("sucesso");
 
-    localStorage.setItem("usuario", JSON.stringify(usuario));
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000);
+      }
+    } catch (erro) {
+      setMensagem(
+        erro.response?.data?.mensagem ||
+          "Erro ao cadastrar. Tente novamente mais tarde 😥"
+      );
+      setTipoMensagem("erro");
+    }
   };
 
   return (
     <>
-      {mensagem && <Modal>{mensagem}</Modal>}
+      {mensagem && (
+        <Modal
+          style={{
+            background: tipoMensagem === "erro" ? "#fee2e2" : "#d1fae5",
+            color: tipoMensagem === "erro" ? "#991b1b" : "#065f46",
+            borderColor: tipoMensagem === "erro" ? "#fecaca" : "#a3e5bd",
+          }}
+        >
+          {mensagem}
+        </Modal>
+      )}
+
       <Wrapper>
         <Formulario onSubmit={handleCadastro}>
           <Titulo>Cadastro 💙</Titulo>

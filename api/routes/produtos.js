@@ -1,4 +1,3 @@
-// routes/produtos.js
 import express from "express";
 import Livro from "../models/Livro.js";
 
@@ -23,7 +22,7 @@ router.post("/", async (req, res) => {
     await novoLivro.save();
     res.status(201).json(novoLivro);
   } catch (err) {
-    console.error("Erro ao cadastrar livro:", err); // Log mais detalhado
+    console.error("Erro ao cadastrar livro:", err);
     res.status(400).json({ erro: "Erro ao cadastrar livro" });
   }
 });
@@ -39,6 +38,7 @@ router.get("/:id", async (req, res) => {
     res.json(livro);
   } catch (error) {
     console.error(`Erro ao buscar livro por ID ${req.params.id}:`, error);
+
     // Erro comum: Cast to ObjectId failed (ID inválido)
     if (error.name === "CastError") {
       return res.status(400).json({ erro: "ID de livro inválido" });

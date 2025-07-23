@@ -124,8 +124,6 @@ const Carrinho = () => {
     }
 
     setMensagemErro("Compra finalizada com sucesso! ✨");
-    // Aqui você pode limpar o carrinho, se quiser
-    // ex: limparCarrinho();
 
     setTimeout(() => {
       setMensagemErro("");

@@ -114,21 +114,21 @@ const CardLivro = styled.div`
 
 const livrosDestaque = [
   {
-    id: "687aa8f5f2c5cde5d8a9c3e9",
+    id: "68812dd6e3a4c443f4abf758",
     titulo: "O Pequeno Príncipe",
     autor: "Antoine de Saint-Exupéry",
     preco: 29.9,
     capa: OPequenoPrincipe,
   },
   {
-    id: "687aeb514d48ae3f354fda08",
+    id: "68812e44e3a4c443f4abf75a",
     titulo: "A Revolução dos Bichos",
     autor: "George Orwell",
     preco: 24.9,
     capa: ARevolucaoBichos,
   },
   {
-    id: "3",
+    id: "68813052e3a4c443f4abf762",
     titulo: "Orgulho e Preconceito",
     autor: "Jane Austen",
     preco: 34.9,
